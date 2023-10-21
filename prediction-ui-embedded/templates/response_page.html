@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>Likelihood of Diabetes</title>
+  </head>
+  <body>
+    {% if prediction_variable %}
+    <p>The species is {{prediction_variable}}.</p>
+    {% else %}
+    <p>Something went wrong</p>
+    {% endif %}
+  </body>
+</html>
+<!-- check https://flask.palletsprojects.com/en/2.3.x/tutorial/templates/ for information if needed -->
