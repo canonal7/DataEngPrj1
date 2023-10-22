@@ -8,7 +8,7 @@ COPY requirements_prod.txt .
 RUN pip install --no-cache-dir -r requirements_prod.txt
 # Copy all files in prediction-api local host directory to /usr/src/myapp in Docker container
 COPY . .
-ENV MODEL_NAME=KNN_model.pkl
+ENV MODEL_NAME=project_model.h5
 # Expose the port that our app runs in
 EXPOSE 5000
 # Run our App
