@@ -231,282 +231,282 @@ deploymentSpec:
     exec-model-comparator:
       container:
         args:
-        - --executor_input
-        - '{{$}}'
-        - --function_to_execute
-        - model_comparator
+          - --executor_input
+          - '{{$}}'
+          - --function_to_execute
+          - model_comparator
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
-          $0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
+          - sh
+          - -c
+          - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+            \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+            \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
+            \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+            $0\" \"$@\"\n"
+          - sh
+          - -ec
+          - 'program_path=$(mktemp -d)
 
 
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
 
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+            _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
 
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef model_comparator(lr_metrics: dict, knn_metrics: dict, rf_metrics:\
-          \ dict)->str:\n    if lr_metrics.get(\"accuracy\") > knn_metrics.get(\"\
-          accuracy\") and lr_metrics.get(\"accuracy\") > rf_metrics.get(\"accuracy\"\
-          ):\n        return \"LR\"\n    elif knn_metrics.get(\"accuracy\") > lr_metrics.get(\"\
-          accuracy\") and knn_metrics.get(\"accuracy\") > rf_metrics.get(\"accuracy\"\
-          ):\n        return \"KNN\"\n    elif rf_metrics.get(\"accuracy\") > lr_metrics.get(\"\
-          accuracy\") and rf_metrics.get(\"accuracy\") > knn_metrics.get(\"accuracy\"\
-          ):\n        return \"RF\"\n    else:\n        print(\"The metrics are not\
-          \ distinct, or there is a tie.\")\n\n"
+            '
+          - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+            \ *\n\ndef model_comparator(lr_metrics: dict, knn_metrics: dict, rf_metrics:\
+            \ dict)->str:\n    if lr_metrics.get(\"accuracy\") > knn_metrics.get(\"\
+            accuracy\") and lr_metrics.get(\"accuracy\") > rf_metrics.get(\"accuracy\"\
+            ):\n        return \"LR\"\n    elif knn_metrics.get(\"accuracy\") > lr_metrics.get(\"\
+            accuracy\") and knn_metrics.get(\"accuracy\") > rf_metrics.get(\"accuracy\"\
+            ):\n        return \"KNN\"\n    elif rf_metrics.get(\"accuracy\") > lr_metrics.get(\"\
+            accuracy\") and rf_metrics.get(\"accuracy\") > knn_metrics.get(\"accuracy\"\
+            ):\n        return \"RF\"\n    else:\n        print(\"The metrics are not\
+            \ distinct, or there is a tie.\")\n\n"
         image: python:3.10.7-slim
     exec-train-knn:
       container:
         args:
-        - --executor_input
-        - '{{$}}'
-        - --function_to_execute
-        - train_knn
+          - --executor_input
+          - '{{$}}'
+          - --function_to_execute
+          - train_knn
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn'\
-          \ && \"$0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
+          - sh
+          - -c
+          - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+            \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+            \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
+            \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+            \  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn'\
+            \ && \"$0\" \"$@\"\n"
+          - sh
+          - -ec
+          - 'program_path=$(mktemp -d)
 
 
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
 
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+            _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
 
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef train_knn(features: Input[Dataset], out_model:Output[Model])\
-          \ -> NamedTuple('outputs', metrics=dict):\n    import pandas as pd\n   \
-          \ from sklearn.ensemble import RandomForestClassifier\n    from sklearn\
-          \ import metrics\n    from sklearn.model_selection import train_test_split\n\
-          \    import logging\n    import sys\n    import pickle \n    from sklearn.preprocessing\
-          \ import LabelEncoder\n    from sklearn.neighbors import KNeighborsClassifier\n\
-          \n    logging.basicConfig(stream=sys.stdout, level=logging.INFO)\n\n   \
-          \ data = pd.read_csv(features.path)\n\n    y=data[\"class\"]\n\n    le =\
-          \ LabelEncoder()\n    y = le.fit_transform(y)\n\n    x_train, x_test, y_train,\
-          \ y_test = train_test_split(data.drop('class',axis=1), \n              \
-          \                                      y, test_size=0.30, \n           \
-          \                                         random_state=101)\n\n    model_knn\
-          \ = KNeighborsClassifier(n_neighbors=3)\n\n    model_knn.fit(x_train, y_train)\n\
-          \n    metrics_dict = {\n        \"accuracy\": model_knn.score(x_test, y_test[:,True])\n\
-          \    }\n    out_model.metadata[\"framework\"] =\"KNN\"\n    file_name =\
-          \ out_model.path + f\".pkl\"\n    with open(file_name, 'wb') as file:  \n\
-          \        pickle.dump(model_knn, file)   \n    outputs = NamedTuple('outputs',\
-          \ metrics=dict)\n    return outputs(metrics_dict)\n\n"
+            '
+          - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+            \ *\n\ndef train_knn(features: Input[Dataset], out_model:Output[Model])\
+            \ -> NamedTuple('outputs', metrics=dict):\n    import pandas as pd\n   \
+            \ from sklearn.ensemble import RandomForestClassifier\n    from sklearn\
+            \ import metrics\n    from sklearn.model_selection import train_test_split\n\
+            \    import logging\n    import sys\n    import pickle \n    from sklearn.preprocessing\
+            \ import LabelEncoder\n    from sklearn.neighbors import KNeighborsClassifier\n\
+            \n    logging.basicConfig(stream=sys.stdout, level=logging.INFO)\n\n   \
+            \ data = pd.read_csv(features.path)\n\n    y=data[\"class\"]\n\n    le =\
+            \ LabelEncoder()\n    y = le.fit_transform(y)\n\n    x_train, x_test, y_train,\
+            \ y_test = train_test_split(data.drop('class',axis=1), \n              \
+            \                                      y, test_size=0.30, \n           \
+            \                                         random_state=101)\n\n    model_knn\
+            \ = KNeighborsClassifier(n_neighbors=3)\n\n    model_knn.fit(x_train, y_train)\n\
+            \n    metrics_dict = {\n        \"accuracy\": model_knn.score(x_test, y_test[:,True])\n\
+            \    }\n    out_model.metadata[\"framework\"] =\"KNN\"\n    file_name =\
+            \ out_model.path + f\".pkl\"\n    with open(file_name, 'wb') as file:  \n\
+            \        pickle.dump(model_knn, file)   \n    outputs = NamedTuple('outputs',\
+            \ metrics=dict)\n    return outputs(metrics_dict)\n\n"
         image: python:3.10.7-slim
     exec-train-lr:
       container:
         args:
-        - --executor_input
-        - '{{$}}'
-        - --function_to_execute
-        - train_lr
+          - --executor_input
+          - '{{$}}'
+          - --function_to_execute
+          - train_lr
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn'\
-          \ && \"$0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
+          - sh
+          - -c
+          - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+            \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+            \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
+            \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+            \  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn'\
+            \ && \"$0\" \"$@\"\n"
+          - sh
+          - -ec
+          - 'program_path=$(mktemp -d)
 
 
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
 
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+            _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
 
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef train_lr(features: Input[Dataset], model: Output[Model])-> NamedTuple('outputs',\
-          \ metrics=dict):\n    '''train a LogisticRegression with default parameters'''\n\
-          \    import pandas as pd\n    from sklearn.linear_model import LogisticRegression\
-          \  \n    from sklearn import metrics\n    from sklearn.model_selection import\
-          \ train_test_split\n    import logging\n    import sys\n    import pickle\
-          \ \n\n    logging.basicConfig(stream=sys.stdout, level=logging.INFO)\n\n\
-          \    data = pd.read_csv(features.path)\n    x_train, x_test, y_train, y_test\
-          \ = train_test_split(data.drop('class',axis=1), \n                     \
-          \                               data['class'], test_size=0.30, \n      \
-          \                                              random_state=101)\n    model_lr\
-          \ = LogisticRegression()\n    model_lr.fit(x_train, y_train)\n    metrics_dict\
-          \ = {\n        \"accuracy\": model_lr.score(x_test, y_test)\n    }\n   \
-          \ logging.info(metrics_dict)\n    model.metadata[\"framework\"] = \"LR\"\
-          \n    file_name = model.path + f\".pkl\"\n    with open(file_name, 'wb')\
-          \ as file:  \n        pickle.dump(model_lr, file)   \n    outputs = NamedTuple('outputs',\
-          \ metrics=dict)\n    return outputs(metrics_dict)\n\n"
+            '
+          - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+            \ *\n\ndef train_lr(features: Input[Dataset], model: Output[Model])-> NamedTuple('outputs',\
+            \ metrics=dict):\n    '''train a LogisticRegression with default parameters'''\n\
+            \    import pandas as pd\n    from sklearn.linear_model import LogisticRegression\
+            \  \n    from sklearn import metrics\n    from sklearn.model_selection import\
+            \ train_test_split\n    import logging\n    import sys\n    import pickle\
+            \ \n\n    logging.basicConfig(stream=sys.stdout, level=logging.INFO)\n\n\
+            \    data = pd.read_csv(features.path)\n    x_train, x_test, y_train, y_test\
+            \ = train_test_split(data.drop('class',axis=1), \n                     \
+            \                               data['class'], test_size=0.30, \n      \
+            \                                              random_state=101)\n    model_lr\
+            \ = LogisticRegression()\n    model_lr.fit(x_train, y_train)\n    metrics_dict\
+            \ = {\n        \"accuracy\": model_lr.score(x_test, y_test)\n    }\n   \
+            \ logging.info(metrics_dict)\n    model.metadata[\"framework\"] = \"LR\"\
+            \n    file_name = model.path + f\".pkl\"\n    with open(file_name, 'wb')\
+            \ as file:  \n        pickle.dump(model_lr, file)   \n    outputs = NamedTuple('outputs',\
+            \ metrics=dict)\n    return outputs(metrics_dict)\n\n"
         image: python:3.10.7-slim
     exec-train-rf:
       container:
         args:
-        - --executor_input
-        - '{{$}}'
-        - --function_to_execute
-        - train_rf
+          - --executor_input
+          - '{{$}}'
+          - --function_to_execute
+          - train_rf
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn'\
-          \ && \"$0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
+          - sh
+          - -c
+          - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+            \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+            \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
+            \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+            \  python3 -m pip install --quiet --no-warn-script-location 'pandas' 'scikit-learn'\
+            \ && \"$0\" \"$@\"\n"
+          - sh
+          - -ec
+          - 'program_path=$(mktemp -d)
 
 
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
 
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+            _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
 
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef train_rf(features: Input[Dataset], out_model:Output[Model]) ->\
-          \ NamedTuple('outputs', metrics=dict):\n    import pandas as pd\n    from\
-          \ sklearn.ensemble import RandomForestClassifier\n    from sklearn import\
-          \ metrics\n    from sklearn.model_selection import train_test_split\n  \
-          \  import logging\n    import sys\n    import pickle \n\n    logging.basicConfig(stream=sys.stdout,\
-          \ level=logging.INFO)\n\n    data = pd.read_csv(features.path)\n    x_train,\
-          \ x_test, y_train, y_test = train_test_split(data.drop('class',axis=1),\
-          \ \n                                                    data['class'], test_size=0.30,\
-          \ \n                                                    random_state=101)\n\
-          \    model_rf = RandomForestClassifier(n_estimators=100)\n    model_rf.fit(x_train,\
-          \ y_train)\n    metrics_dict = {\n        \"accuracy\": model_rf.score(x_test,\
-          \ y_test)\n    }\n    out_model.metadata[\"framework\"] =\"RF\"\n    file_name\
-          \ = out_model.path + f\".pkl\"\n    with open(file_name, 'wb') as file:\
-          \  \n        pickle.dump(model_rf, file)   \n    outputs = NamedTuple('outputs',\
-          \ metrics=dict)\n    return outputs(metrics_dict)\n\n"
+            '
+          - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+            \ *\n\ndef train_rf(features: Input[Dataset], out_model:Output[Model]) ->\
+            \ NamedTuple('outputs', metrics=dict):\n    import pandas as pd\n    from\
+            \ sklearn.ensemble import RandomForestClassifier\n    from sklearn import\
+            \ metrics\n    from sklearn.model_selection import train_test_split\n  \
+            \  import logging\n    import sys\n    import pickle \n\n    logging.basicConfig(stream=sys.stdout,\
+            \ level=logging.INFO)\n\n    data = pd.read_csv(features.path)\n    x_train,\
+            \ x_test, y_train, y_test = train_test_split(data.drop('class',axis=1),\
+            \ \n                                                    data['class'], test_size=0.30,\
+            \ \n                                                    random_state=101)\n\
+            \    model_rf = RandomForestClassifier(n_estimators=100)\n    model_rf.fit(x_train,\
+            \ y_train)\n    metrics_dict = {\n        \"accuracy\": model_rf.score(x_test,\
+            \ y_test)\n    }\n    out_model.metadata[\"framework\"] =\"RF\"\n    file_name\
+            \ = out_model.path + f\".pkl\"\n    with open(file_name, 'wb') as file:\
+            \  \n        pickle.dump(model_rf, file)   \n    outputs = NamedTuple('outputs',\
+            \ metrics=dict)\n    return outputs(metrics_dict)\n\n"
         image: python:3.10.7-slim
     exec-upload-model-to-gcs:
       container:
         args:
-        - --executor_input
-        - '{{$}}'
-        - --function_to_execute
-        - upload_model_to_gcs
+          - --executor_input
+          - '{{$}}'
+          - --function_to_execute
+          - upload_model_to_gcs
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location 'google-cloud-storage'\
-          \ && \"$0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
+          - sh
+          - -c
+          - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+            \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+            \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
+            \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+            \  python3 -m pip install --quiet --no-warn-script-location 'google-cloud-storage'\
+            \ && \"$0\" \"$@\"\n"
+          - sh
+          - -ec
+          - 'program_path=$(mktemp -d)
 
 
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
 
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+            _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
 
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef upload_model_to_gcs(project_id: str, model_repo: str, model:\
-          \ Input[Model]):\n    '''upload model to gsc'''\n    from google.cloud import\
-          \ storage   \n    import logging \n    import sys\n\n    logging.basicConfig(stream=sys.stdout,\
-          \ level=logging.INFO)    \n\n    # upload the model to GCS\n    client =\
-          \ storage.Client(project=project_id)\n    bucket = client.bucket(model_repo)\n\
-          \    blob = bucket.blob(model.metadata[\"framework\"] + '_model' + '.pkl')\n\
-          \    source_file_name= model.path + '.pkl'\n\n    blob.upload_from_filename(source_file_name)\
-          \    \n\n    print(f\"File {source_file_name} uploaded to {model_repo}.\"\
-          )\n\n"
+            '
+          - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+            \ *\n\ndef upload_model_to_gcs(project_id: str, model_repo: str, model:\
+            \ Input[Model]):\n    '''upload model to gsc'''\n    from google.cloud import\
+            \ storage   \n    import logging \n    import sys\n\n    logging.basicConfig(stream=sys.stdout,\
+            \ level=logging.INFO)    \n\n    # upload the model to GCS\n    client =\
+            \ storage.Client(project=project_id)\n    bucket = client.bucket(model_repo)\n\
+            \    blob = bucket.blob(model.metadata[\"framework\"] + '_model' + '.pkl')\n\
+            \    source_file_name= model.path + '.pkl'\n\n    blob.upload_from_filename(source_file_name)\
+            \    \n\n    print(f\"File {source_file_name} uploaded to {model_repo}.\"\
+            )\n\n"
         image: python:3.10.7-slim
     exec-upload-model-to-gcs-2:
       container:
         args:
-        - --executor_input
-        - '{{$}}'
-        - --function_to_execute
-        - upload_model_to_gcs
+          - --executor_input
+          - '{{$}}'
+          - --function_to_execute
+          - upload_model_to_gcs
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location 'google-cloud-storage'\
-          \ && \"$0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
+          - sh
+          - -c
+          - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+            \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+            \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
+            \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+            \  python3 -m pip install --quiet --no-warn-script-location 'google-cloud-storage'\
+            \ && \"$0\" \"$@\"\n"
+          - sh
+          - -ec
+          - 'program_path=$(mktemp -d)
 
 
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
 
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+            _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
 
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef upload_model_to_gcs(project_id: str, model_repo: str, model:\
-          \ Input[Model]):\n    '''upload model to gsc'''\n    from google.cloud import\
-          \ storage   \n    import logging \n    import sys\n\n    logging.basicConfig(stream=sys.stdout,\
-          \ level=logging.INFO)    \n\n    # upload the model to GCS\n    client =\
-          \ storage.Client(project=project_id)\n    bucket = client.bucket(model_repo)\n\
-          \    blob = bucket.blob(model.metadata[\"framework\"] + '_model' + '.pkl')\n\
-          \    source_file_name= model.path + '.pkl'\n\n    blob.upload_from_filename(source_file_name)\
-          \    \n\n    print(f\"File {source_file_name} uploaded to {model_repo}.\"\
-          )\n\n"
+            '
+          - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+            \ *\n\ndef upload_model_to_gcs(project_id: str, model_repo: str, model:\
+            \ Input[Model]):\n    '''upload model to gsc'''\n    from google.cloud import\
+            \ storage   \n    import logging \n    import sys\n\n    logging.basicConfig(stream=sys.stdout,\
+            \ level=logging.INFO)    \n\n    # upload the model to GCS\n    client =\
+            \ storage.Client(project=project_id)\n    bucket = client.bucket(model_repo)\n\
+            \    blob = bucket.blob(model.metadata[\"framework\"] + '_model' + '.pkl')\n\
+            \    source_file_name= model.path + '.pkl'\n\n    blob.upload_from_filename(source_file_name)\
+            \    \n\n    print(f\"File {source_file_name} uploaded to {model_repo}.\"\
+            )\n\n"
         image: python:3.10.7-slim
     exec-upload-model-to-gcs-3:
       container:
         args:
-        - --executor_input
-        - '{{$}}'
-        - --function_to_execute
-        - upload_model_to_gcs
+          - --executor_input
+          - '{{$}}'
+          - --function_to_execute
+          - upload_model_to_gcs
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location 'google-cloud-storage'\
-          \ && \"$0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
+          - sh
+          - -c
+          - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+            \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+            \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.3.0'\
+            \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+            \  python3 -m pip install --quiet --no-warn-script-location 'google-cloud-storage'\
+            \ && \"$0\" \"$@\"\n"
+          - sh
+          - -ec
+          - 'program_path=$(mktemp -d)
 
 
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+            printf "%s" "$0" > "$program_path/ephemeral_component.py"
 
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+            _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
 
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef upload_model_to_gcs(project_id: str, model_repo: str, model:\
-          \ Input[Model]):\n    '''upload model to gsc'''\n    from google.cloud import\
-          \ storage   \n    import logging \n    import sys\n\n    logging.basicConfig(stream=sys.stdout,\
-          \ level=logging.INFO)    \n\n    # upload the model to GCS\n    client =\
-          \ storage.Client(project=project_id)\n    bucket = client.bucket(model_repo)\n\
-          \    blob = bucket.blob(model.metadata[\"framework\"] + '_model' + '.pkl')\n\
-          \    source_file_name= model.path + '.pkl'\n\n    blob.upload_from_filename(source_file_name)\
-          \    \n\n    print(f\"File {source_file_name} uploaded to {model_repo}.\"\
-          )\n\n"
+            '
+          - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+            \ *\n\ndef upload_model_to_gcs(project_id: str, model_repo: str, model:\
+            \ Input[Model]):\n    '''upload model to gsc'''\n    from google.cloud import\
+            \ storage   \n    import logging \n    import sys\n\n    logging.basicConfig(stream=sys.stdout,\
+            \ level=logging.INFO)    \n\n    # upload the model to GCS\n    client =\
+            \ storage.Client(project=project_id)\n    bucket = client.bucket(model_repo)\n\
+            \    blob = bucket.blob(model.metadata[\"framework\"] + '_model' + '.pkl')\n\
+            \    source_file_name= model.path + '.pkl'\n\n    blob.upload_from_filename(source_file_name)\
+            \    \n\n    print(f\"File {source_file_name} uploaded to {model_repo}.\"\
+            )\n\n"
         image: python:3.10.7-slim
 pipelineInfo:
   name: iris-predictor-training-pipeline
@@ -517,8 +517,8 @@ root:
         componentRef:
           name: comp-condition-1
         dependentTasks:
-        - model-comparator
-        - train-rf
+          - model-comparator
+          - train-rf
         inputs:
           artifacts:
             pipelinechannel--train-rf-out_model:
@@ -537,14 +537,15 @@ root:
         taskInfo:
           name: condition-1
         triggerPolicy:
-          condition: inputs.parameter_values['pipelinechannel--model-comparator-Output']
+          condition:
+            inputs.parameter_values['pipelinechannel--model-comparator-Output']
             == 'RF'
       condition-2:
         componentRef:
           name: comp-condition-2
         dependentTasks:
-        - model-comparator
-        - train-lr
+          - model-comparator
+          - train-lr
         inputs:
           artifacts:
             pipelinechannel--train-lr-model:
@@ -563,14 +564,15 @@ root:
         taskInfo:
           name: condition-2
         triggerPolicy:
-          condition: inputs.parameter_values['pipelinechannel--model-comparator-Output']
+          condition:
+            inputs.parameter_values['pipelinechannel--model-comparator-Output']
             == 'LR'
       condition-3:
         componentRef:
           name: comp-condition-3
         dependentTasks:
-        - model-comparator
-        - train-knn
+          - model-comparator
+          - train-knn
         inputs:
           artifacts:
             pipelinechannel--train-knn-out_model:
@@ -589,7 +591,8 @@ root:
         taskInfo:
           name: condition-3
         triggerPolicy:
-          condition: inputs.parameter_values['pipelinechannel--model-comparator-Output']
+          condition:
+            inputs.parameter_values['pipelinechannel--model-comparator-Output']
             == 'KNN'
       importer:
         cachingOptions:
@@ -608,9 +611,9 @@ root:
         componentRef:
           name: comp-model-comparator
         dependentTasks:
-        - train-knn
-        - train-lr
-        - train-rf
+          - train-knn
+          - train-lr
+          - train-rf
         inputs:
           parameters:
             knn_metrics:
@@ -633,7 +636,7 @@ root:
         componentRef:
           name: comp-train-knn
         dependentTasks:
-        - importer
+          - importer
         inputs:
           artifacts:
             features:
@@ -648,7 +651,7 @@ root:
         componentRef:
           name: comp-train-lr
         dependentTasks:
-        - importer
+          - importer
         inputs:
           artifacts:
             features:
@@ -663,7 +666,7 @@ root:
         componentRef:
           name: comp-train-rf
         dependentTasks:
-        - importer
+          - importer
         inputs:
           artifacts:
             features:
