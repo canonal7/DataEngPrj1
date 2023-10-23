@@ -37,7 +37,7 @@ def check_species():
         status = dp.predict_single_record(df)
 
         return render_template("response_page.html",
-                               prediction_variable=status[0])
+                               prediction_variable=status)
 
     else:
         return jsonify(message="Method Not Allowed"), 405  # The 405 Method Not Allowed should be used to indicate
