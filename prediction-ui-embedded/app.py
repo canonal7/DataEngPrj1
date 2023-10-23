@@ -25,10 +25,10 @@ def check_species():
     elif request.method == "POST":
         prediction_input = [
             {
-                "sl": int(request.form.get("sl")),  
-                "sw": int(request.form.get("sw")),  
-                "pl": int(request.form.get("pl")),
-                "pw": int(request.form.get("pw"))
+                "sl": float(request.form.get("sl")),  
+                "sw": float(request.form.get("sw")),  
+                "pl": float(request.form.get("pl")),
+                "pw": float(request.form.get("pw"))
                 
             }
         ]
