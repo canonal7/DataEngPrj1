@@ -22,6 +22,7 @@ def check_species():
     if request.method == "GET":
         return render_template("input_form_page.html")
 
+
     elif request.method == "POST":
         prediction_input = [
             {
